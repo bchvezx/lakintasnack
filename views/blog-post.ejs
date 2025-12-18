@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= post.title %> - <%= config.name || 'La Quinta Snack Bar' %></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e74c3c;
+            --secondary-color: #2c3e50;
+            --dark-bg: #2c3e50;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-utensils"></i> <%= config.name || 'La Quinta Snack Bar' %>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#menu">Menú</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#contact">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin" style="color: var(--primary-color);">
+                            <i class="fas fa-cog"></i> Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="/blog">Blog</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><%= post.title %></li>
+                    </ol>
+                </nav>
+
+                <article class="card shadow-sm">
+                    <% if (post.image) { %>
+                    <img src="/uploads/<%= post.image %>" class="card-img-top" alt="<%= post.title %>" style="height: 400px; object-fit: cover;">
+                    <% } %>
+                    
+                    <div class="card-body">
+                        <header class="mb-4">
+                            <h1 class="display-5 fw-bold text-primary mb-3"><%= post.title %></h1>
+                            <div class="text-muted">
+                                <i class="fas fa-calendar me-2"></i>
+                                Publicado el <%= new Date(post.created_at).toLocaleDateString('es-ES', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                }) %>
+                            </div>
+                        </header>
+
+                        <div class="post-content">
+                            <p class="lead"><%= post.content.split('\n')[0] %></p>
+                            <% 
+                            const paragraphs = post.content.split('\n').slice(1);
+                            paragraphs.forEach(paragraph => {
+                                if (paragraph.trim()) {
+                            %>
+                            <p><%= paragraph %></p>
+                            <% 
+                                }
+                            }); 
+                            %>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="social-share">
+                                <span class="text-muted me-3">Compartir:</span>
+                                <% if (config.whatsapp) { %>
+                                <a href="https://wa.me/<%= config.whatsapp.replace(/[^0-9]/g, '') %>?text=Mira esta noticia: <%= post.title %>" 
+                                   class="btn btn-success btn-sm me-2" target="_blank">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                <% } %>
+                                <% if (config.facebook) { %>
+                                <a href="<%= config.facebook %>" class="btn btn-primary btn-sm me-2" target="_blank">
+                                    <i class="fab fa-facebook"></i> Facebook
+                                </a>
+                                <% } %>
+                            </div>
+                            <a href="/blog" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Volver al blog
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Call to Action -->
+                <div class="card mt-4 bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h5>¿Te gustó esta noticia?</h5>
+                        <p class="mb-3">Visítanos y disfruta de nuestros deliciosos platos</p>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <a href="/#menu" class="btn btn-light">
+                                <i class="fas fa-utensils me-2"></i>Ver Menú
+                            </a>
+                            <% if (config.whatsapp) { %>
+                            <a href="https://wa.me/<%= config.whatsapp.replace(/[^0-9]/g, '') %>?text=Hola, quiero hacer un pedido" 
+                               class="btn btn-success" target="_blank">
+                                <i class="fab fa-whatsapp me-2"></i>Pedir Ahora
+                            </a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-utensils"></i> <%= config.name || 'La Quinta Snack Bar' %></h5>
+                    <p>Donde cada bocado es una experiencia única.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <p><i class="fas fa-phone"></i> <%= config.phone || '' %></p>
+                    <p><i class="fas fa-envelope"></i> <%= config.email || '' %></p>
+                    <p><i class="fas fa-map-marker-alt"></i> <%= config.address || '' %></p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Síguenos</h5>
+                    <div class="social-links">
+                        <% if (config.facebook) { %>
+                        <a href="<%= config.facebook %>" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <% } %>
+                        <% if (config.instagram) { %>
+                        <a href="<%= config.instagram %>" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <% } %>
+                        <% if (config.twitter) { %>
+                        <a href="<%= config.twitter %>" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <% } %>
+                        <% if (config.whatsapp) { %>
+                        <a href="https://wa.me/<%= config.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p>&copy; 2024 <%= config.name || 'La Quinta Snack Bar' %>. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
